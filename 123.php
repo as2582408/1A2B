@@ -1,20 +1,17 @@
 <?php
 session_start();
 
-//echo $_POST['oao'];
-//echo $_SESSION['rand'];
-
-checkPostNumber($_POST['oao']);
+checkPostNumber($_POST['number']);
 
 if(!isset($_SESSION['rand'])) {
     $_SESSION['rand'] = createRandNumber();
 }
 
-$_POST['oao'] = sprintf("%04d", $_POST['oao']); 
+$_POST['number'] = sprintf("%04d", $_POST['number']); 
 //字串切割
 $randarr = str_split($_SESSION['rand'], 1);
-$userarr = str_split($_POST['oao'], 1);
-
+$userarr = str_split($_POST['number'], 1);
+//var_dump($randarr);
 $A = 0;
 $B = 0;
 for($i = 0; $i < count($userarr); $i++) {
@@ -25,9 +22,17 @@ for($i = 0; $i < count($userarr); $i++) {
     }
 }
 
-if($A == 4) unset($_SESSION['rand']);
-echo $A.'A'.$B.'B';
+if($A == 4) {
+    unset($_SESSION['rand']);
+    unset($_SESSION['his']);
+} else {
+    $_SESSION['his'] .= $_POST['number'] . ' ' . $A . 'A' . $B . 'B<br>';
+}
 
+echo $A.'A'.$B.'B<br>';
+echo $_SESSION['his'];
+
+//認證輸入的數字
 function checkPostNumber($postData)
 {
     $data = str_split($postData, 1);

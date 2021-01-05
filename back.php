@@ -1,19 +1,22 @@
 <?php
 session_start();
-
-checkPostNumber($_POST['number']);
-
-if (!isset($_SESSION['rand'])) {
-    $_SESSION['rand'] = createRandNumber();
+//新遊戲建立答案
+if (!isset($_SESSION['randNumber'])) {
+    $_SESSION['randNumber'] = createRandNumber();
+}
+//顯示答案
+if ($_POST['poi'] == true) {
+    echo '答案是：' . $_SESSION['randNumber'];
+    exit;
 }
 
+//檢查數字
+checkPostNumber($_POST['number']);
 $_POST['number'] = sprintf("%04d", $_POST['number']); 
 //字串切割
-$randArray = str_split($_SESSION['rand'], 1);
+$randArray = str_split($_SESSION['randNumber'], 1);
 $userArray = str_split($_POST['number'], 1);
-//var_dump($randArray);
-$A = 0;
-$B = 0;
+$A = $B = 0;
 
 for ($i = 0; $i < count($userArray); $i++) {
     if ($userArray[$i] == $randArray[$i]){
@@ -23,15 +26,18 @@ for ($i = 0; $i < count($userArray); $i++) {
     }
 }
 
-if ($A == 4) {
-    unset($_SESSION['rand']);
-    unset($_SESSION['his']);
-} else {
-    $_SESSION['his'] .= $_POST['number'] . ' ' . $A . 'A' . $B . 'B<br>';
-}
+if($A == 4) {
+    //猜對後將資料清空，以進行下一局‘
+    unset($_SESSION['randNumber']);
+    unset($_SESSION['history']);
+    echo $A.'A'.$B.'B！<br>';
 
-echo $A.'A'.$B.'B<br>';
-echo $_SESSION['his'];
+} else {
+    $_SESSION['history'] .= $_POST['number'] . ' ' . $A . 'A' . $B . 'B<br>';
+    echo $A.'A'.$B.'B<br>';
+    echo $_SESSION['history'];
+
+}
 
 //認證輸入的數字
 function checkPostNumber($postData)

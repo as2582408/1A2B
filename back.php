@@ -3,26 +3,27 @@ session_start();
 
 checkPostNumber($_POST['number']);
 
-if(!isset($_SESSION['rand'])) {
+if (!isset($_SESSION['rand'])) {
     $_SESSION['rand'] = createRandNumber();
 }
 
 $_POST['number'] = sprintf("%04d", $_POST['number']); 
 //字串切割
-$randarr = str_split($_SESSION['rand'], 1);
-$userarr = str_split($_POST['number'], 1);
-//var_dump($randarr);
+$randArray = str_split($_SESSION['rand'], 1);
+$userArray = str_split($_POST['number'], 1);
+//var_dump($randArray);
 $A = 0;
 $B = 0;
-for($i = 0; $i < count($userarr); $i++) {
-    if ($userarr[$i] == $randarr[$i]){
+
+for ($i = 0; $i < count($userArray); $i++) {
+    if ($userArray[$i] == $randArray[$i]){
         $A++;
-    } elseif (in_array($randarr[$i], $userarr)) {
+    } elseif (in_array($randArray[$i], $userArray)) {
         $B++;
     }
 }
 
-if($A == 4) {
+if ($A == 4) {
     unset($_SESSION['rand']);
     unset($_SESSION['his']);
 } else {
@@ -36,18 +37,17 @@ echo $_SESSION['his'];
 function checkPostNumber($postData)
 {
     $data = str_split($postData, 1);
-    if(count($data) != 4 ) {
+    if (count($data) != 4 ) {
         echo '請輸入4位數字';
         exit;
     }
 }
-
 //認證隨機數無相同數字
 function checkRandNumber($randNumber)
 {
     $randNumberq = str_split($randNumber, 1);
-    for($i = 0; $i < count($randNumberq); $i++) {
-        for($j = $i+1; $j < count($randNumberq); $j++) {
+    for ($i = 0; $i < count($randNumberq); $i++) {
+        for ($j = $i+1; $j < count($randNumberq); $j++) {
             if ($randNumberq[$i] == $randNumberq[$j]) {
                 $randNumber = createRandNumber();
             }
@@ -64,4 +64,3 @@ function createRandNumber()
     $checkedNum = checkRandNumber($rand);
     return $checkedNum;
 }
-?>

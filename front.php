@@ -5,15 +5,15 @@
         <input type='button' name='submit' id='button' value="確認 " /> 
     </form>
     <p id="p1"></p>
-    <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function(){
         $("#button").click(function() {
             var data = document.getElementById("number").value;
         $.ajax({
-            url: "/123.php",   //後端的URL
-            type: "POST",   //用POST的方式
-            dataType: "text",   //response的資料格式
-            cache: false,   //是否暫存
+            url: "back.php",
+            type: "POST",
+            dataType: "text",
+            cache: false,
             data: {
                 number:data
             },
@@ -21,7 +21,7 @@
                 //console.log(response);  
                 document.getElementById("p1").innerHTML = response;
             },
-            error: function(){ 
+            error: function(){
                 console.log('哪裡怪怪的');
         	    } 
             });

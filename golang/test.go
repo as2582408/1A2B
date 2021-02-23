@@ -111,9 +111,11 @@ func test2(w http.ResponseWriter, r *http.Request) {
 func answer(w http.ResponseWriter, r *http.Request)  {
 	r.ParseForm()
 	Reply := fmt.Sprintf("答案為%v%v%v%v", randomNumber[0], randomNumber[1], randomNumber[2], randomNumber[3])
+	ReplyAnswer := fmt.Sprintf("%v<br> %v",Reply ,history)
 	if r.Method == "POST" {
-		w.Write([]byte(Reply))
+		w.Write([]byte(ReplyAnswer))
 		randomNumber = random_num()
+		history = ""
 		return
 	} else {
 		tmpl := template.Must(template.ParseFiles("./index.html"))

@@ -6,11 +6,10 @@ import (
 	"html/template"
 	"math/rand"
 	"time"
-	"strconv"
 	"fmt"
 	"strings"
 )
-var randomNumber []int
+var randomNumber []string
 var history 	 string
 
 type IndexData struct {
@@ -20,9 +19,9 @@ type IndexData struct {
 	Reply	string
 }
 
-func random_num() []int {
-    initial := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9} 
-    random := make([]int, 4)    
+func random_num() []string {
+    initial := []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"} 
+    random := make([]string, 4)    
     r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
     for i := 0; i < 4; i++ {
@@ -32,7 +31,7 @@ func random_num() []int {
         initial[tmp], initial[len(initial)-1-i] = initial[len(initial)-1-i], initial[tmp]
 	}
 	
-	if random[0] == 0 {
+	if random[0] == "0" {
 		random = random_num()
 	}
     return random
@@ -51,7 +50,6 @@ func test2(w http.ResponseWriter, r *http.Request) {
 	AA := "A"
 	BB := "B"
 	var userarrS []string
-	var userarrI [4]int
 
 	r.ParseForm()
 
@@ -62,7 +60,8 @@ func test2(w http.ResponseWriter, r *http.Request) {
 		if len(userarrS) != 4 {
 			data := new(IndexData)
 			data.Poi = "數字錯誤"
-			w.Write([]byte(data.Poi))
+			Reply := fmt.Sprintf("%v<br> %v",data.Poi ,history)
+			w.Write([]byte(Reply))
 			return
 		}
 
@@ -70,21 +69,18 @@ func test2(w http.ResponseWriter, r *http.Request) {
 			if i+1 != 4 && userarrS[i] == userarrS[i+1] {
 				data := new(IndexData)
 				data.Poi = "不能輸入重複數字"
-				w.Write([]byte(data.Poi))
+				Reply := fmt.Sprintf("%v<br> %v",data.Poi ,history)
+				w.Write([]byte(Reply))
 				return
 			}
 		}
 
 		for i := 0; i < 4; i++ {
-			userarrI[i], _ = strconv.Atoi(userarrS[i])
-		}
-
-		for i := 0; i < 4; i++ {
-			if userarrI[i] == randomNumber[i] {
+			if userarrS[i] == randomNumber[i] {
 				A++
 			}
-			for j := 0; j < len(userarrI); j++ {
-				if userarrI[i] == randomNumber[j] {
+			for j := 0; j < len(userarrS); j++ {
+				if userarrS[i] == randomNumber[j] {
 					B++
 				}
 			}
@@ -92,7 +88,7 @@ func test2(w http.ResponseWriter, r *http.Request) {
 		//因為是每次都計算B 所以要扣掉正確的數量
 		B -= A
 
-		history = fmt.Sprintf("%v<br>%v%v%v%v %v%v%v%v",history, userarrI[0], userarrI[1], userarrI[2], userarrI[3], A, AA ,B, BB, )
+		history = fmt.Sprintf("%v<br>%v%v%v%v %v%v%v%v",history, userarrS[0], userarrS[1], userarrS[2], userarrS[3], A, AA ,B, BB, )
 		Reply := fmt.Sprintf("%v%v%v%v<br> %v", A, AA ,B, BB, history)
 		w.Write([]byte(Reply))
 		
@@ -132,7 +128,7 @@ func main() {
 	http.HandleFunc("/answer", answer)
 
 
-	err := http.ListenAndServe(":8000", nil)
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
